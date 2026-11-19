@@ -220,10 +220,9 @@ this size; they show that the veto design transfers across physics. The GTM Stud
 off by default (`PHYSICSVETO_MOCK=0` plus `ANTHROPIC_API_KEY`); its drafts are labeled and must be reviewed.
 
 ## License
-[MIT](LICENSE)
+(LICENSE)
 
 ## About the author
 Dr Hesham Moubarak, geophysicist with about 25 years of operator experience (ExxonMobil, KOC, Devon), now
 building verified subsurface AI.
 
-*Independent portfolio project. Not affiliated with or endorsed by NVIDIA or any vendor mentioned.*
