@@ -3,7 +3,9 @@
 **AI surrogates make simulation much faster. Physics decides whether you can trust the answer.**
 
 [![CI](https://github.com/hmoubarak72/physicsveto/actions/workflows/ci.yml/badge.svg)](https://github.com/hmoubarak72/physicsveto/actions/workflows/ci.yml)
-[![Live demo](https://img.shields.io/badge/demo-Streamlit-76b900)](LIVE_DEMO_URL)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776ab)](pyproject.toml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![Streamlit app](https://img.shields.io/badge/app-Streamlit-76b900)](#quickstart)
 
 PhysicsVeto trains AI surrogates for a physics solver, checks **every prediction** against the governing
 equation, the boundary conditions, energy conservation and the training distribution, and routes any
@@ -61,7 +63,7 @@ fluid leaving through the boundary must equal what the sources inject.
 
 What the per-mode tables show: in Case B the veto misses part of the uniform amplitude drift (a scaled
 temperature field is still nearly smooth and balanced), and a few in-distribution predictions just over the 10%
-tolerance are accepted. In Case C the FNO happens to generalise well to channels and fine-scale rock, but the
+tolerance are accepted. In Case C the FNO happens to generalize well to channels and fine-scale rock, but the
 out-of-distribution check vetoes them anyway: conservative, it costs solver runs, not wrong answers.
 
 <details><summary>Case B per failure mode</summary>
@@ -114,17 +116,32 @@ residual (rows 2 and 4): that is the case for physics-informed training when sol
 - **It works with any surrogate.** The veto is a layer on top of existing solvers and model frameworks, so it
   fits into the tools customers already own.
 
-## Architecture
+## How it works
 ```mermaid
 flowchart LR
-    I[Input: velocity model + shot] --> M[FNO surrogate]
-    M --> V{Physics veto}
-    V -- ACCEPT --> U[Use answer]
-    V -- REVIEW --> E[Engineer review]
-    V -- VETO --> F[Full FD solver]
-    V --> R[ROI: net of vetoed runs]
+    I["Input<br/>A: velocity model + shot<br/>B: conductivity + heat sources<br/>C: permeability + wells"] --> M["AI surrogates<br/>FNO + U-Net"]
+    M --> V{"Physics veto<br/>PDE residual · boundary ·<br/>energy / conservation ·<br/>OOD · model disagreement"}
+    V -- "ACCEPT" --> U["Use the answer"]
+    V -- "REVIEW" --> E["Engineer review"]
+    V -- "VETO" --> F["Full reference solver"]
+    V --> R["ROI model<br/>net of vetoed runs"]
 ```
+Each check is scored against its level on in-distribution validation data (`results/calibration.json`).
+The weighted sub-scores give a **Trust Score (0-100)**; any check past its hard limit forces a VETO.
+Weights, hard limits and verdict thresholds live in `config/veto.yaml` and `config/veto_steady.yaml`.
 Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## The app
+| Page | What it shows |
+|---|---|
+| Home | Pipeline overview and headline numbers |
+| 1 · Simulate & Compare | FD solver vs FNO and U-Net on a velocity model you choose (Case A) |
+| 2 · Physics Veto | Trust Score, residual maps and verdicts; "Try to break it" plants a random failure |
+| 3 · Thermal & Darcy Cases | The same veto on steady heat conduction (B) and Darcy flow (C) |
+| 4 · ROI & Business Case | HPC cost and time-to-design model, net of vetoed runs, with a tornado chart |
+| 5 · Benchmark Lab | Leaderboards, per-failure-mode results, scaling curve, training histories |
+| 6 · Go-to-Market Studio | Solution briefs and talk tracks per vertical (templates; optional LLM drafting) |
+| 7 · Roadmap & PRD | Product requirements and roadmap |
 
 ## Quickstart
 ```bash
@@ -145,6 +162,39 @@ docker compose up      # then open http://localhost:8501
 **Streamlit Community Cloud:** New app → this repo → main file `app/Home.py`. Weights and results are committed,
 so the hosted app runs inference only.
 
+## Repository layout
+```
+physicsveto/
+  solvers/    wave.py (2D acoustic FD, Mur absorbing edges) · elliptic.py (finite-volume -div(k grad u) = f)
+  data/       fields.py (Case A inputs, planted failures) · steady.py (Cases B and C)
+  models/     fno.py · unet.py · surrogate.py (Case A wrapper) · steady.py (Cases B and C wrapper)
+  verify/     checks.py · steady.py (physics checks) · ood.py (Mahalanobis OOD) · trust.py (Trust Score, verdict)
+  roi/        cost.py (HPC cost model and tornado sensitivity)
+  gtm/        content.py (templates) · llm.py (optional Claude API drafting)
+  backends/   physicsnemo_backend.py (outline for NVIDIA PhysicsNeMo; not run here)
+app/          Streamlit app: Home.py + pages/1-7
+config/       cases.yaml · veto.yaml · veto_steady.yaml · roi_defaults.yaml
+scripts/      generate_data*.py · train*.py · benchmark*.py · scaling.py · pinn_case_b.py · make_report.py
+weights/      trained checkpoints (committed, so the app runs inference only)
+results/      metrics, calibration, evaluation CSVs and figures that the app and this README read
+docs/         PRD, architecture, model card, case study, demo script; templates/ feed make_report.py
+tests/        pytest suite for solvers, data, veto, steady cases, ROI and models
+```
+
+## Tests and reproducibility
+```bash
+pip install -r requirements-dev.txt && pip install -e .
+make test    # pytest, 48 tests, a few seconds on CPU
+make lint    # ruff
+```
+CI (GitHub Actions) runs lint, the test suite, and a headless smoke test that loads every app page.
+
+Every number in this README is filled in from `results/` by `scripts/make_report.py`; edit
+`docs/templates/README.md.tmpl`, not this file. Data generation is seeded, so rerunning `make bench` and
+`make bench-steady` on the committed weights reproduces the accuracy and veto metrics exactly. Timings depend on
+the CPU and will differ on your machine. Generated datasets (`data/*.npz`, about 1 GB) are git-ignored and rebuilt
+by `make data` and `make data-steady` in about a minute each.
+
 ## Product thinking
 - [PRD and roadmap](docs/PRD.md) · [Case study](docs/CASE_STUDY.md) · [One-page brief](docs/ONE_PAGER.md)
 - [5-minute demo script](docs/DEMO_SCRIPT.md) · [Model card](docs/MODEL_CARD.md) · [LinkedIn drafts](docs/LINKEDIN_POSTS.md)
@@ -162,7 +212,10 @@ residual and is caught here only by model disagreement. The energy check never f
 failures are synthetic and mostly strong; subtle real-world drift will be harder. Cases B and C are
 small steady 2D problems where a sparse direct solve takes milliseconds, so the surrogate does not save time at
 this size; they show that the veto design transfers across physics. The GTM Studio's LLM mode is optional and
-off by default (`PHYSICSVETO_MOCK=0` plus `ANTHROPIC_API_KEY`); its drafts are labelled and must be reviewed.
+off by default (`PHYSICSVETO_MOCK=0` plus `ANTHROPIC_API_KEY`); its drafts are labeled and must be reviewed.
+
+## License
+[MIT](LICENSE)
 
 ## About the author
 Dr Hesham Moubarak, geophysicist with about 25 years of operator experience (ExxonMobil, KOC, Devon), now

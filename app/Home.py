@@ -85,12 +85,12 @@ if any(r for _, r in rows):
 st.markdown("#### Walk through the demo")
 st.page_link("pages/1_Simulate_and_Compare.py", label="Simulate & Compare: solver vs surrogate", icon="🧪")
 st.page_link("pages/2_Physics_Veto.py", label="Physics Veto: try to break it", icon="🛡️")
-st.page_link("pages/2_Thermal_and_Darcy_Cases.py", label="Thermal & Darcy cases (B and C): same veto, new physics",
+st.page_link("pages/3_Thermal_and_Darcy_Cases.py", label="Thermal & Darcy cases (B and C): same veto, new physics",
              icon="🔥")
-st.page_link("pages/3_ROI_Business_Case.py", label="ROI & Business Case", icon="💰")
-st.page_link("pages/4_Benchmark_Lab.py", label="Benchmark Lab", icon="📊")
-st.page_link("pages/5_GTM_Studio.py", label="Go-to-Market Studio", icon="🎯")
-st.page_link("pages/6_Roadmap_and_PRD.py", label="Roadmap & PRD", icon="🗺️")
+st.page_link("pages/4_ROI_Business_Case.py", label="ROI & Business Case", icon="💰")
+st.page_link("pages/5_Benchmark_Lab.py", label="Benchmark Lab", icon="📊")
+st.page_link("pages/6_GTM_Studio.py", label="Go-to-Market Studio", icon="🎯")
+st.page_link("pages/7_Roadmap_and_PRD.py", label="Roadmap & PRD", icon="🗺️")
 
 st.divider()
 st.caption(

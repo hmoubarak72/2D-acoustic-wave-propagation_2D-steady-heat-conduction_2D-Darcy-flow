@@ -3,6 +3,12 @@ name = "physicsveto"
 version = "0.1.0"
 description = "AI physics surrogate workbench with a physics veto"
 requires-python = ">=3.11"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Hesham Moubarak" }]
+
+[project.urls]
+Repository = "https://github.com/hmoubarak72/physicsveto"
 
 [tool.setuptools.packages.find]
 include = ["physicsveto*"]

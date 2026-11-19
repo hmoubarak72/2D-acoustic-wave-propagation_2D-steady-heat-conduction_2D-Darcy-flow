@@ -3,20 +3,18 @@
 from __future__ import annotations
 
 import time
-from pathlib import Path
 
 import numpy as np
 
-from physicsveto.config import load_case
+from physicsveto.config import DATA_DIR, load_case
 from physicsveto.data.fields import PLANTED_INPUTS, build_set
 
-ROOT = Path(__file__).resolve().parents[1]
 N_PLANTED = 40
 
 
 def main() -> None:
     case = load_case("case_a")
-    out = ROOT / "data"
+    out = DATA_DIR
     out.mkdir(exist_ok=True)
     rng = np.random.default_rng(case["seed"])
     t0 = time.time()
