@@ -51,8 +51,8 @@ def main() -> None:
             settle()
             frames.append(Image.open(io.BytesIO(page.screenshot())))
         small = [f.convert("RGB").resize((960, 667)) for f in frames]
-        small[0].save(FIG / "veto_demo.gif", save_all=True, append_images=small[1:], duration=1800, loop=0)
-        print("saved veto_demo.gif")
+        small[0].save(FIG / "try_to_break_it.gif", save_all=True, append_images=small[1:], duration=1800, loop=0)
+        print("saved try_to_break_it.gif")
         b.close()
 
 
