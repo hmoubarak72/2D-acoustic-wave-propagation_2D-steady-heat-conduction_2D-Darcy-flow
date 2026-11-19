@@ -8,7 +8,7 @@ license = { text = "MIT" }
 authors = [{ name = "Hesham Moubarak" }]
 
 [project.urls]
-Repository = "https://github.com/hmoubarak72/physicsveto"
+Repository = "https://github.com/hmoubarak72/2D-acoustic-wave-propagation_2D-steady-heat-conduction_2D-Darcy-flow"
 
 [tool.setuptools.packages.find]
 include = ["physicsveto*"]

@@ -2,7 +2,7 @@
 
 **AI surrogates make simulation much faster. Physics decides whether you can trust the answer.**
 
-[![CI](https://github.com/hmoubarak72/physicsveto/actions/workflows/ci.yml/badge.svg)](https://github.com/hmoubarak72/physicsveto/actions/workflows/ci.yml)
+[![CI](https://github.com/hmoubarak72/2D-acoustic-wave-propagation_2D-steady-heat-conduction_2D-Darcy-flow/actions/workflows/ci.yml/badge.svg)](https://github.com/hmoubarak72/2D-acoustic-wave-propagation_2D-steady-heat-conduction_2D-Darcy-flow/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776ab)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 [![Streamlit app](https://img.shields.io/badge/app-Streamlit-76b900)](#quickstart)
@@ -13,6 +13,11 @@ prediction that fails to the full solver. The measured veto rate then drives an 
 
 > Three cases on one pipeline: **A** 2D acoustic wave (seismic imaging, FWI), **B** steady heat conduction
 > (electronics cooling), **C** Darcy flow in porous media (reservoir, groundwater, CO2 storage).
+
+![PhysicsVeto app home page](results/figures/home.png)
+
+### Try to break it
+The Physics Veto page plants a random failure and shows whether the veto catches it.
 
 ![Try to break it](results/figures/veto_demo.gif)
 
