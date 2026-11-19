@@ -1,0 +1,47 @@
+# Physics veto configuration (Case A).
+#
+# Every check produces a raw metric. Its "reference level" is the 95th percentile of that
+# metric on held-out IN-DISTRIBUTION validation predictions (written by scripts/calibrate.py
+# to results/calibration.json). The ratio r = metric / reference_level drives the score:
+#   r <= 1          -> sub-score 100 (as good as typical in-distribution predictions)
+#   r >= hard_ratio -> sub-score 0 and an automatic VETO
+# Trust Score = weighted mean of sub-scores.
+
+calibration_percentile: 95
+
+checks:
+  pde_residual:
+    weight: 0.30
+    hard_ratio: 3.0
+    label: "PDE residual"
+    explain: "How badly the predicted wavefield violates the wave equation itself."
+  boundary_error:
+    weight: 0.10
+    hard_ratio: 4.0
+    label: "Absorbing boundary"
+    explain: "The domain edges are absorbing: waves must leave without reflecting. The prediction must satisfy that edge condition."
+  energy_violation:
+    weight: 0.15
+    hard_ratio: 4.0
+    floor: 0.02          # allow 2% growth from time discretisation before penalising
+    label: "Energy conservation"
+    explain: "After the source stops, wave energy can only leave the domain. Growth means the model invented energy."
+  ood_distance:
+    weight: 0.30
+    hard_ratio: 2.0
+    label: "Out-of-distribution input"
+    explain: "How far this geology and shot position are from anything the surrogate was trained on."
+  ensemble_disagreement:
+    weight: 0.15
+    hard_ratio: 3.0
+    label: "Model disagreement"
+    explain: "FNO and U-Net were trained independently. When they disagree, at least one is wrong."
+
+verdicts:
+  accept_min_score: 80
+  review_min_score: 55
+
+# Ground truth for validating the veto itself: a prediction is truly "bad" when its
+# relative L2 error against the reference solver exceeds this tolerance
+# (10%: about 5x the median in-distribution FNO error, a typical engineering screening tolerance).
+error_tolerance: 0.10

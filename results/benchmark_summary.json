@@ -1,0 +1,105 @@
+{
+  "case": "A: 2D acoustic wave, 64x64, 252 steps",
+  "hardware": "x86_64, 1 CPU thread",
+  "fd_solver_ms": 9.16,
+  "fno_single_ms": 45.17,
+  "fno_batched_ms_per_sample": 22.086,
+  "veto_check_ms": 1.48,
+  "speedup_single": 0.2,
+  "speedup_batched": 0.41,
+  "speedup_note": "FNO on CPU vs FD solver on CPU at 64x64, same machine, 1 thread. Not a production-scale or GPU number.",
+  "fno_in_dist_rel_l2_median": 0.0214,
+  "fno_in_dist_rel_l2_p90": 0.0383,
+  "unet_in_dist_rel_l2_median": 0.0284,
+  "in_dist_veto_rate": 0.0,
+  "in_dist_flag_rate": 0.0,
+  "error_tolerance": 0.1,
+  "veto_precision": 0.834,
+  "veto_recall": 0.995,
+  "flag_precision": 0.813,
+  "flag_recall": 1.0,
+  "n_eval": 430,
+  "n_truly_bad": 222,
+  "accepted_rel_l2_p95": 0.0582,
+  "accepted_share_truly_bad": 0.0,
+  "unfiltered_share_truly_bad": 0.5163,
+  "reference_output_accept_rate": 1.0,
+  "per_mode": {
+    "amplitude_drift": {
+      "group": "model corruption",
+      "n": 40,
+      "share_truly_bad": 1.0,
+      "veto_rate": 1.0,
+      "flag_rate": 1.0,
+      "recall_of_bad": 1.0,
+      "median_rel_l2": 0.4612
+    },
+    "checkerboard_artifact": {
+      "group": "model corruption",
+      "n": 40,
+      "share_truly_bad": 0.0,
+      "veto_rate": 1.0,
+      "flag_rate": 1.0,
+      "recall_of_bad": null,
+      "median_rel_l2": 0.0605
+    },
+    "high_contrast": {
+      "group": "input failure",
+      "n": 40,
+      "share_truly_bad": 1.0,
+      "veto_rate": 1.0,
+      "flag_rate": 1.0,
+      "recall_of_bad": 1.0,
+      "median_rel_l2": 0.6344
+    },
+    "in_distribution": {
+      "group": "in-distribution",
+      "n": 150,
+      "share_truly_bad": 0.0,
+      "veto_rate": 0.0,
+      "flag_rate": 0.0,
+      "recall_of_bad": null,
+      "median_rel_l2": 0.0214
+    },
+    "mild_shift": {
+      "group": "input failure",
+      "n": 40,
+      "share_truly_bad": 0.55,
+      "veto_rate": 0.625,
+      "flag_rate": 0.825,
+      "recall_of_bad": 1.0,
+      "median_rel_l2": 0.1063
+    },
+    "moved_source": {
+      "group": "input failure",
+      "n": 40,
+      "share_truly_bad": 1.0,
+      "veto_rate": 1.0,
+      "flag_rate": 1.0,
+      "recall_of_bad": 1.0,
+      "median_rel_l2": 0.7293
+    },
+    "rough_geology": {
+      "group": "input failure",
+      "n": 40,
+      "share_truly_bad": 1.0,
+      "veto_rate": 1.0,
+      "flag_rate": 1.0,
+      "recall_of_bad": 1.0,
+      "median_rel_l2": 0.1496
+    },
+    "salt_body": {
+      "group": "input failure",
+      "n": 40,
+      "share_truly_bad": 1.0,
+      "veto_rate": 1.0,
+      "flag_rate": 1.0,
+      "recall_of_bad": 1.0,
+      "median_rel_l2": 0.4243
+    }
+  },
+  "train_minutes": {
+    "fno": 38.71,
+    "unet": 34.11
+  }
+}

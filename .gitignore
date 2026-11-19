@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+data/*.npz
+.streamlit/secrets.toml
+.env
+
+# transfer helpers (safe to delete)
+weights/*.part*
+Makefile.txt
+ci_workflow.yml.txt

@@ -1,0 +1,7 @@
+services:
+  physicsveto:
+    build: .
+    ports:
+      - "8501:8501"
+    environment:
+      - PHYSICSVETO_MOCK=1

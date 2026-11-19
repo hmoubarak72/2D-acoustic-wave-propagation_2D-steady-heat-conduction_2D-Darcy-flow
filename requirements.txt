@@ -1,0 +1,9 @@
+# CPU-only PyTorch keeps the hosted app small (Streamlit Community Cloud, Docker, CI)
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.7.1+cpu
+numpy==2.5.5
+scipy==1.18.1
+pandas==3.1.1
+plotly==7.1.0
+streamlit==1.67.0
+PyYAML==6.0.3

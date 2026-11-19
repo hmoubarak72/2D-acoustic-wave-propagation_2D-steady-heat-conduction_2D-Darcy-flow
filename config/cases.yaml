@@ -1,0 +1,25 @@
+# Case A: 2D acoustic wave propagation (energy / subsurface)
+case_a:
+  name: "2D acoustic wave propagation"
+  vertical: "Energy / subsurface (seismic imaging, FWI)"
+  n: 64                 # grid cells per side
+  dx: 10.0              # m
+  dt: 0.0008            # s  (CFL-checked against max velocity at run time)
+  nt: 252               # time steps; last anchor + 1 must be < nt
+  sponge: 0             # optional sponge width (cells); Mur absorbing edges are always on
+  sponge_strength: 0.0
+  f0: 15.0              # Ricker peak frequency (Hz)
+  t0: 0.07              # Ricker delay (s)
+  # Anchor steps the surrogate predicts. Each anchor is predicted as a
+  # triplet (n-1, n, n+1) so the PDE residual can be evaluated in time.
+  anchors: [60, 90, 120, 150, 175, 200, 225, 250]
+  # Training distribution
+  v_min: 2000.0
+  v_max: 3500.0
+  corr_len_range: [5.0, 10.0]     # Gaussian smoothing sigma (cells)
+  source_depth: 16                # row index
+  source_x_range: [20, 44]        # column index range
+  n_train: 1200
+  n_val: 150
+  n_test: 150
+  seed: 7

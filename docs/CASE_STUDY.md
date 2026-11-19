@@ -1,0 +1,82 @@
+# Case study: launching a physics veto for AI surrogates
+
+*Framed as a product launch. All numbers come from `results/` (generated 2026-11-19).*
+
+## 1. Problem
+Simulation-heavy teams in energy, automotive, aerospace, electronics and manufacturing are bottlenecked by
+solver time. AI surrogates such as Fourier Neural Operators can return an answer in milliseconds, and the
+open-source physics-ML ecosystem has made them easy to train. Yet in customer conversations the same objection
+comes up: *"How do I know the surrogate is right for this new case?"* A test-set average doesn't answer that,
+and a single silent failure on an unusual geology or design can cost more than all the saved compute.
+
+## 2. Insight
+Physics provides a reference that's available for every prediction, even when the true solution isn't. A
+predicted wavefield must satisfy the wave equation, the absorbing boundary condition and energy conservation,
+and it should come from an input that resembles the training data. Checking these on every prediction turns
+"trust the model" into "trust the model where the physics agrees, and run the solver where it doesn't."
+The second insight is commercial: **the fallback rate, not the model's speed, sets the value**, because the
+effective speedup of the workflow is 1 / (veto rate + 1/speedup).
+
+## 3. Solution
+PhysicsVeto is a workbench with one pipeline: solver → dataset → surrogate → verification → ROI.
+- **Case A (built):** 2D acoustic wave propagation for seismic, with an FD reference solver (Mur absorbing edges),
+  1,200 training models, and FNO and U-Net surrogates trained on CPU in under an hour.
+- **Physics veto:** five checks (PDE residual, absorbing boundary, energy growth, Mahalanobis OOD distance,
+  FNO-vs-U-Net disagreement), each calibrated to the 95th percentile of in-distribution behavior and combined
+  into a Trust Score with ACCEPT / REVIEW / VETO.
+- **App:** a 7-page Streamlit demo, including a "Try to break it" button that generates failures live.
+
+## 4. Evidence
+| | |
+|---|---|
+| FNO in-distribution error (median rel. L2) | 2.1% |
+| Planted-failure benchmark | 430 predictions, 222 truly bad (error > 10.0%) |
+| VETO precision / recall | 83.4% / 99.5% |
+| Recall including REVIEW | 100.0% |
+| Bad answers among accepted | 0.0% (vs. 51.6% without veto) |
+| Veto rate on normal work | 0.0% |
+| Speed at 64×64, CPU | FD 9.2 ms vs FNO 22.1 ms per case (0.41×) |
+| Speed at 512×512, CPU | 3.8× |
+
+| Test set | Type | Cases | Truly bad | Vetoed | Vetoed or review | Bad cases caught |
+|---|---|---|---|---|---|---|
+| Uniform amplitude drift | model corruption | 40 | 100.0% | 100.0% | 100.0% | 100.0% |
+| Injected checkerboard artifact | model corruption | 40 | 0.0% | 100.0% | 100.0% | n/a |
+| Extreme velocity contrast | input failure | 40 | 100.0% | 100.0% | 100.0% | 100.0% |
+| In-distribution (normal work) | in-distribution | 150 | 0.0% | 0.0% | 0.0% | n/a |
+| Mild distribution shift | input failure | 40 | 55.0% | 62.5% | 82.5% | 100.0% |
+| Shot moved to edge / deeper | input failure | 40 | 100.0% | 100.0% | 100.0% | 100.0% |
+| Rough geology | input failure | 40 | 100.0% | 100.0% | 100.0% | 100.0% |
+| Salt body | input failure | 40 | 100.0% | 100.0% | 100.0% | 100.0% |
+
+**What I learned, honestly:**
+- At small scale on CPU, the surrogate isn't faster. The speed case depends on resolution, dimension and GPU
+  inference, so the ROI model takes the production speedup as a labeled assumption and measures only the veto rate.
+- Physics checks catch failures that break the physics (artifacts, unseen geology, boundary errors), but a
+  nearly physically consistent wrong answer, such as a uniform amplitude error, barely registers on the
+  residual. In the benchmark the FNO-vs-U-Net disagreement check is what catches it. Per-mode results make
+  that dependency visible instead of hiding it in an average.
+- The veto is conservative. Most false alarms are injected artifacts that break the physics while staying
+  under the 10% error tolerance, plus mildly shifted inputs. A false alarm costs one solver run, a miss costs
+  a wrong decision, so the thresholds lean toward recall.
+- The energy check never fired on this benchmark; the other four checks carried every catch. It stays in as a
+  guard against models that invent energy, which none of the planted failures did.
+- An early version used a thin sponge boundary. A solver test showed that it reflected energy back into the domain, so
+  I switched to Mur absorbing edges before training. Testing the reference solver mattered as much as testing the
+  model.
+
+## 5. Go-to-market
+- **Beachhead:** energy and subsurface (seismic survey design and FWI forward modeling), where the presenter has
+  25 years of domain credibility and the economics of many forward models are clear.
+- **Motion:** a two-week pilot. The customer brings around 1,000 historical runs of one workload; we train,
+  calibrate the veto, and report their veto rate and net ROI. That number is the business case.
+- **Assets:** live demo, ROI calculator, one-page brief and talk track per vertical (GTM Studio), objection
+  handling built around "Can I trust it?"
+- **Partner fit:** the veto is framework-agnostic and sits on top of open-source physics-ML frameworks such as
+  NVIDIA PhysicsNeMo, and on top of existing CAE solvers, which sell more GPU and solver capacity.
+
+## 6. Next steps
+1. Cases B (heat) and C (Darcy) on the same pipeline; a PINN baseline for B.
+2. Active learning: vetoed cases go back into training, the lever with the most effect on veto rate and ROI.
+3. GPU path with PhysicsNeMo and 3D volumes; measure real speedups.
+4. Customer pilot harness and per-customer recalibration.

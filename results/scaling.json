@@ -1,0 +1,48 @@
+{
+  "hardware": "CPU, 1 thread (this machine)",
+  "measured": [
+    {
+      "n": 64,
+      "cells": 4096,
+      "time_steps": 252,
+      "fd_ms": 8.834666999973706,
+      "fno_ms_per_sample": 13.888301874999343,
+      "speedup": 0.6361229097329169
+    },
+    {
+      "n": 128,
+      "cells": 16384,
+      "time_steps": 504,
+      "fd_ms": 65.25165300035951,
+      "fno_ms_per_sample": 58.47210512501988,
+      "speedup": 1.1159449939564208
+    },
+    {
+      "n": 256,
+      "cells": 65536,
+      "time_steps": 1008,
+      "fd_ms": 514.9519039998722,
+      "fno_ms_per_sample": 309.66438412497155,
+      "speedup": 1.6629355211610406
+    },
+    {
+      "n": 384,
+      "cells": 147456,
+      "time_steps": 1512,
+      "fd_ms": 2093.1871719999435,
+      "fno_ms_per_sample": 697.8259681250165,
+      "speedup": 2.999583374095568
+    },
+    {
+      "n": 512,
+      "cells": 262144,
+      "time_steps": 2016,
+      "fd_ms": 5129.383501999882,
+      "fno_ms_per_sample": 1348.1073862500352,
+      "speedup": 3.804877530022322
+    }
+  ],
+  "fd_exponent": 3.07,
+  "fno_exponent": 2.21,
+  "note": "2D only. FD cost grows ~N^3 (N^2 cells x N steps); FNO ~N^2 log N. In 3D the gap widens (FD ~N^4). Exponents are fitted to the measured points."
+}

@@ -1,0 +1,70 @@
+# LinkedIn post drafts
+
+*Drafts for review before posting. Numbers come from `results/` ({{date}}). Add the demo link before posting.*
+
+---
+
+## 1. Technical angle
+
+AI surrogates for physics are fast. The hard part is knowing when one is wrong.
+
+I built PhysicsVeto, a small workbench that wraps a Fourier Neural Operator for 2D seismic wave propagation in
+a "physics veto." Every prediction is checked, without the true answer, against:
+• the wave equation itself (finite-difference residual)
+• the absorbing boundary condition
+• energy conservation after the source stops
+• distance from the training data (Mahalanobis)
+• agreement with an independently trained U-Net
+
+On a planted-failure benchmark (salt bodies, extreme contrast, rough geology, moved shots, injected
+artifacts), the veto stopped {{flag_r}} of truly bad predictions, and the share of bad answers among accepted
+predictions fell from {{raw_bad}} to {{acc_bad}}.
+
+What surprised me most was a blind spot. A wavefield that is uniformly scaled almost satisfies a linear wave
+equation, so the residual check barely notices it. What caught it was disagreement with a second,
+independently trained model. Reporting results per failure mode makes that dependency visible.
+
+Also measured honestly: at 64×64 on a CPU the solver is faster than the network. The crossover shows up as
+resolution grows.
+
+Code and live demo: [link]
+#ScientificML #NeuralOperators #Geophysics #Simulation
+
+---
+
+## 2. Business angle
+
+The number that decides whether AI surrogates pay off in simulation isn't the speedup. It's the fallback rate.
+
+If 10% of surrogate predictions have to be re-run on the full solver, the whole workflow can never be more than
+10× faster, whether the model is 100× or 1,000× faster. Effective speedup = 1 / (veto rate + 1/speedup).
+
+So I built the ROI model in PhysicsVeto to subtract every vetoed run, using the veto rate it actually measures
+({{vr}} on normal work in the demo case), with a tornado chart showing what really moves the business case.
+The answer: veto rate and problem size, more than model speed.
+
+For CAE and HPC teams, that changes the roadmap. Investing in active learning on vetoed cases beats chasing a
+faster network.
+
+Demo with the ROI calculator: [link]
+#ProductManagement #HPC #CAE #AI
+
+---
+
+## 3. Personal angle
+
+I spent about 25 years as a geophysicist at operators including ExxonMobil, KOC and Devon. A lot of that time
+went into waiting for forward models.
+
+AI surrogates can now produce a seismic wavefield in milliseconds. In every room I've been in, the question
+that followed was: "Can I trust it on my geology?"
+
+So I built a small answer to that question. PhysicsVeto checks every AI prediction against the physics I've
+worked with my whole career, and sends the ones that fail back to the solver. Try the "break it" button in the
+demo: drop in a salt body the model has never seen and watch the veto fire.
+
+It's a prototype, 2D and synthetic, and I've written down every limitation. It's also how I think AI should
+enter engineering: fast where it's safe, and honest about where it isn't.
+
+[link]
+#Geophysics #AI #Energy #CCS

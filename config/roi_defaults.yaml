@@ -1,0 +1,18 @@
+# Default ROI inputs. These are ILLUSTRATIVE customer assumptions, not measurements.
+# The veto rate default is replaced in the app by the measured value in
+# results/benchmark_summary.json. The production speedup is an assumption: at the 64x64
+# demo scale on CPU the surrogate is NOT faster than the solver (see results/scaling.json).
+sims_per_cycle: 2000
+cycles_per_year: 12
+core_hours_per_run: 400.0
+usd_per_core_hour: 0.05
+surrogate_speedup: 100.0
+veto_rate: 0.10
+wall_hours_per_run: 8.0
+concurrent_runs: 50
+training_sims: 1500
+gpu_training_hours: 50
+usd_per_gpu_hour: 3.0
+engineer_usd_per_hour: 120.0
+engineer_setup_hours: 160
+engineer_wait_share: 0.25
