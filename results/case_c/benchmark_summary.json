@@ -1,0 +1,87 @@
+{
+  "case": "2D Darcy flow, 64x64",
+  "hardware": "x86_64, 1 CPU thread",
+  "fd_solver_ms": 6.28,
+  "fno_single_ms": 9.69,
+  "fno_batched_ms_per_sample": 18.515,
+  "speedup_batched": 0.34,
+  "fno_in_dist_rel_l2_median": 0.0179,
+  "unet_in_dist_rel_l2_median": 0.0155,
+  "in_dist_veto_rate": 0.0,
+  "in_dist_flag_rate": 0.0,
+  "error_tolerance": 0.1,
+  "veto_precision": 0.546,
+  "veto_recall": 1.0,
+  "flag_precision": 0.546,
+  "flag_recall": 1.0,
+  "n_eval": 390,
+  "n_truly_bad": 131,
+  "accepted_share_truly_bad": 0.0,
+  "unfiltered_share_truly_bad": 0.3359,
+  "reference_output_accept_rate": 1.0,
+  "per_mode": {
+    "amplitude_drift": {
+      "group": "model corruption",
+      "n": 40,
+      "share_truly_bad": 1.0,
+      "veto_rate": 1.0,
+      "flag_rate": 1.0,
+      "recall_of_bad": 1.0,
+      "median_rel_l2": 0.3665
+    },
+    "channels": {
+      "group": "input failure",
+      "n": 40,
+      "share_truly_bad": 0.0,
+      "veto_rate": 1.0,
+      "flag_rate": 1.0,
+      "recall_of_bad": null,
+      "median_rel_l2": 0.0388
+    },
+    "checkerboard_artifact": {
+      "group": "model corruption",
+      "n": 40,
+      "share_truly_bad": 0.275,
+      "veto_rate": 1.0,
+      "flag_rate": 1.0,
+      "recall_of_bad": 1.0,
+      "median_rel_l2": 0.0855
+    },
+    "fine_scale": {
+      "group": "input failure",
+      "n": 40,
+      "share_truly_bad": 0.0,
+      "veto_rate": 1.0,
+      "flag_rate": 1.0,
+      "recall_of_bad": null,
+      "median_rel_l2": 0.0383
+    },
+    "high_contrast": {
+      "group": "input failure",
+      "n": 40,
+      "share_truly_bad": 1.0,
+      "veto_rate": 1.0,
+      "flag_rate": 1.0,
+      "recall_of_bad": 1.0,
+      "median_rel_l2": 0.6372
+    },
+    "in_distribution": {
+      "group": "in-distribution",
+      "n": 150,
+      "share_truly_bad": 0.0,
+      "veto_rate": 0.0,
+      "flag_rate": 0.0,
+      "recall_of_bad": null,
+      "median_rel_l2": 0.0179
+    },
+    "well_injection": {
+      "group": "input failure",
+      "n": 40,
+      "share_truly_bad": 1.0,
+      "veto_rate": 1.0,
+      "flag_rate": 1.0,
+      "recall_of_bad": 1.0,
+      "median_rel_l2": 0.4137
+    }
+  }
+}

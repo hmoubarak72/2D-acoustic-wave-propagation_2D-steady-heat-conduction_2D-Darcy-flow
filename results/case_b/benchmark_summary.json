@@ -1,0 +1,87 @@
+{
+  "case": "2D steady heat conduction, 64x64",
+  "hardware": "x86_64, 1 CPU thread",
+  "fd_solver_ms": 9.45,
+  "fno_single_ms": 12.48,
+  "fno_batched_ms_per_sample": 18.924,
+  "speedup_batched": 0.5,
+  "fno_in_dist_rel_l2_median": 0.0314,
+  "unet_in_dist_rel_l2_median": 0.0303,
+  "in_dist_veto_rate": 0.0,
+  "in_dist_flag_rate": 0.0,
+  "error_tolerance": 0.1,
+  "veto_precision": 0.758,
+  "veto_recall": 0.904,
+  "flag_precision": 0.721,
+  "flag_recall": 0.921,
+  "n_eval": 390,
+  "n_truly_bad": 177,
+  "accepted_share_truly_bad": 0.0854,
+  "unfiltered_share_truly_bad": 0.4538,
+  "reference_output_accept_rate": 1.0,
+  "per_mode": {
+    "amplitude_drift": {
+      "group": "model corruption",
+      "n": 40,
+      "share_truly_bad": 1.0,
+      "veto_rate": 0.725,
+      "flag_rate": 0.775,
+      "recall_of_bad": 0.775,
+      "median_rel_l2": 0.3509
+    },
+    "checkerboard_artifact": {
+      "group": "model corruption",
+      "n": 40,
+      "share_truly_bad": 0.8,
+      "veto_rate": 1.0,
+      "flag_rate": 1.0,
+      "recall_of_bad": 1.0,
+      "median_rel_l2": 0.146
+    },
+    "edge_hotspot": {
+      "group": "input failure",
+      "n": 40,
+      "share_truly_bad": 1.0,
+      "veto_rate": 1.0,
+      "flag_rate": 1.0,
+      "recall_of_bad": 1.0,
+      "median_rel_l2": 0.7418
+    },
+    "extreme_contrast": {
+      "group": "input failure",
+      "n": 40,
+      "share_truly_bad": 0.9,
+      "veto_rate": 1.0,
+      "flag_rate": 1.0,
+      "recall_of_bad": 1.0,
+      "median_rel_l2": 0.1596
+    },
+    "in_distribution": {
+      "group": "in-distribution",
+      "n": 150,
+      "share_truly_bad": 0.033,
+      "veto_rate": 0.0,
+      "flag_rate": 0.0,
+      "recall_of_bad": 0.0,
+      "median_rel_l2": 0.0314
+    },
+    "many_sources": {
+      "group": "input failure",
+      "n": 40,
+      "share_truly_bad": 0.025,
+      "veto_rate": 0.7,
+      "flag_rate": 0.975,
+      "recall_of_bad": 1.0,
+      "median_rel_l2": 0.0555
+    },
+    "overpowered": {
+      "group": "input failure",
+      "n": 40,
+      "share_truly_bad": 0.575,
+      "veto_rate": 0.85,
+      "flag_rate": 0.9,
+      "recall_of_bad": 1.0,
+      "median_rel_l2": 0.1126
+    }
+  }
+}

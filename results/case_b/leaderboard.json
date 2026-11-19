@@ -1,0 +1,68 @@
+[
+  {
+    "model": "FD solver (reference)",
+    "rel_l2_median": 0.0,
+    "latency_ms": 9.45,
+    "batched_ms_per_sample": 9.45,
+    "params": 0,
+    "train_minutes": 0.0,
+    "n_train": 0,
+    "physics_weight": 0.0,
+    "residual_median": 0.0
+  },
+  {
+    "model": "FNO",
+    "rel_l2_median": 0.0314,
+    "latency_ms": 12.48,
+    "batched_ms_per_sample": 18.924,
+    "params": 1188385,
+    "train_minutes": 28.44,
+    "n_train": 1000,
+    "physics_weight": 0.0,
+    "residual_median": 1.0024
+  },
+  {
+    "model": "FNO, 100 samples",
+    "rel_l2_median": 0.1456,
+    "latency_ms": 14.88,
+    "batched_ms_per_sample": 17.361,
+    "params": 1188385,
+    "train_minutes": 15.02,
+    "n_train": 100,
+    "physics_weight": 0.0,
+    "residual_median": 2.1832
+  },
+  {
+    "model": "FNO + physics loss",
+    "rel_l2_median": 0.0243,
+    "latency_ms": 12.59,
+    "batched_ms_per_sample": 18.932,
+    "params": 1188385,
+    "train_minutes": 29.9,
+    "n_train": 1000,
+    "physics_weight": 0.2,
+    "residual_median": 0.0773
+  },
+  {
+    "model": "FNO + physics loss, 100 samples",
+    "rel_l2_median": 0.0947,
+    "latency_ms": 14.25,
+    "batched_ms_per_sample": 19.452,
+    "params": 1188385,
+    "train_minutes": 15.04,
+    "n_train": 100,
+    "physics_weight": 0.2,
+    "residual_median": 0.2367
+  },
+  {
+    "model": "U-Net",
+    "rel_l2_median": 0.0303,
+    "latency_ms": 13.75,
+    "batched_ms_per_sample": 14.176,
+    "params": 468097,
+    "train_minutes": 30.74,
+    "n_train": 1000,
+    "physics_weight": 0.0,
+    "residual_median": 2.2987
+  }
+]

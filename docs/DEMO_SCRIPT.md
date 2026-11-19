@@ -51,11 +51,15 @@ Then say the honest part on purpose:
 
 ---
 
-**If asked "why not just use a PINN?"** Physics-informed training lowers the residual on average but doesn't
-tell you when a specific prediction is wrong. The veto is complementary: it works with any surrogate.
+**If asked "why not just use a PINN?"** Open the Benchmark Lab, Case B comparison. A classic PINN needs no
+solver data, but it is trained again for every new layout, so each answer costs minutes of training instead of
+one forward pass. Physics-informed training (the physics-loss FNO) lowers the residual on average but still
+doesn't tell you when a specific prediction is wrong. The veto is complementary: it works with any surrogate.
 
 **If asked "how are thresholds set?"** Each check is calibrated to the 95th percentile on held-out
 in-distribution predictions. A customer deployment recalibrates on their own data.
 
-**If asked about Cases B and C:** they're on the roadmap and use the same pipeline. Case A shipped first because
-it's the presenter's domain and the hardest physics of the three (time-dependent waves).
+**If asked about Cases B and C:** open "Thermal & Darcy cases". Same pipeline, same veto scoring, new physics:
+steady heat conduction for electronics cooling and Darcy flow for reservoirs and CO2 storage. The energy check
+becomes a conservation check (what leaves through the boundary must equal what the sources inject). Be upfront
+that at 64×64 a sparse solve takes milliseconds, so these cases show that the trust layer transfers, not speed.

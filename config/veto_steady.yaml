@@ -1,0 +1,39 @@
+# Physics veto for the steady cases B (heat) and C (Darcy). Same scoring rules as config/veto.yaml:
+# each metric is divided by its 95th percentile on in-distribution validation predictions,
+# sub-scores fall to 0 at hard_ratio, and any hard-limit breach is an automatic VETO.
+
+calibration_percentile: 95
+
+checks:
+  pde_residual:
+    weight: 0.30
+    hard_ratio: 3.0
+    label: "PDE residual"
+    explain: "How badly the predicted field violates -div(k grad u) = f at every cell."
+  boundary_error:
+    weight: 0.10
+    hard_ratio: 4.0
+    label: "Boundary condition"
+    explain: "The edges are held at u = 0 (heat sink / constant-pressure boundary). Non-zero edge values are unphysical."
+  conservation:
+    weight: 0.15
+    hard_ratio: 4.0
+    floor: 0.01
+    label: "Energy / mass balance"
+    explain: "Everything injected inside (heat or fluid) must leave through the boundary. A mismatch means the model created or lost energy or mass."
+  ood_distance:
+    weight: 0.30
+    hard_ratio: 2.0
+    label: "Out-of-distribution input"
+    explain: "How far this material layout and loading are from anything the surrogate was trained on."
+  ensemble_disagreement:
+    weight: 0.15
+    hard_ratio: 3.0
+    label: "Model disagreement"
+    explain: "FNO and U-Net were trained independently. When they disagree, at least one is wrong."
+
+verdicts:
+  accept_min_score: 80
+  review_min_score: 55
+
+error_tolerance: 0.10

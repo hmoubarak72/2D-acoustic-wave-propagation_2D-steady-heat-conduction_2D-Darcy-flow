@@ -148,6 +148,12 @@ def run_all(v, src):
 # ---------------- plots ----------------
 
 def heat(z, title, colorscale="RdBu", zmid=None, zmin=None, zmax=None, height=300, unit=""):
+    if isinstance(colorscale, str) and colorscale in ("Inferno", "Magma", "Viridis", "Hot"):
+        import plotly.express as px
+
+        seq = getattr(px.colors.sequential, colorscale, None) or ["#000000", "#e5484d", "#f2a900", "#ffffff"]
+        rgb = [c if c.startswith("rgb") else "rgb({},{},{})".format(*px.colors.hex_to_rgb(c)) for c in seq]
+        colorscale = [[i / (len(rgb) - 1), c] for i, c in enumerate(rgb)]
     fig = go.Figure(go.Heatmap(z=z, colorscale=colorscale, zmid=zmid, zmin=zmin, zmax=zmax,
                                colorbar={"thickness": 10, "title": unit}))
     fig.update_layout(title={"text": title, "font": {"size": 14}}, height=height, template="plotly_dark",
@@ -181,3 +187,57 @@ def gauge(value, title, color, max_value=100.0, suffix=""):
 
 def p0(pred):
     return pred[0::3]
+
+
+# ---------------- steady cases B (heat) and C (Darcy) ----------------
+
+STEADY_LABELS = {
+    "case_b": {
+        "title": "Case B · Steady heat conduction (electronics cooling)",
+        "u": "Temperature rise", "k": "Conductivity k", "f": "Heat sources q", "u_unit": "K",
+        "modes": {
+            "in_distribution": "In-distribution board (like training)",
+            "edge_hotspot": "Hot chip right next to the cold edge",
+            "extreme_contrast": "Extreme conductivity contrast (copper next to an air gap)",
+            "many_sources": "Six to nine small hot chips",
+            "overpowered": "Same layout, 3-5x the power",
+        },
+    },
+    "case_c": {
+        "title": "Case C · Darcy flow in porous media (reservoir, groundwater, CO2 storage)",
+        "u": "Pressure", "k": "Permeability k", "f": "Injection f", "u_unit": "",
+        "modes": {
+            "in_distribution": "In-distribution two-facies rock (like training)",
+            "high_contrast": "Permeability contrast 1:100 (shale streaks)",
+            "channels": "Long thin channels (fluvial geology)",
+            "well_injection": "Concentrated injection well instead of uniform injection",
+            "fine_scale": "Very fine-scale heterogeneity",
+        },
+    },
+}
+
+
+@st.cache_resource
+def steady_bundle(case_key: str):
+    """(case, solver, {name: SteadySurrogate}, SteadyVeto | None) for Case B or C."""
+    import torch
+
+    from physicsveto.models.steady import SteadySurrogate
+    from physicsveto.solvers.elliptic import EllipticSolver
+    from physicsveto.verify.steady import SteadyVeto
+
+    torch.set_num_threads(1)
+    case = load_case(case_key)
+    sur = {a: SteadySurrogate.load(WEIGHTS_DIR, case_key, a) for a in ("fno", "unet")
+           if (WEIGHTS_DIR / f"{case_key}_{a}.pt").exists()}
+    path = RESULTS_DIR / case_key / "calibration.json"
+    veto = SteadyVeto(case_key, load_veto(case_key), json.loads(path.read_text())) if path.exists() else None
+    return case, EllipticSolver(case["n"]), sur, veto
+
+
+def steady_input(case_key: str, mode: str, seed: int):
+    from physicsveto.data.steady import IN_DIST, PLANTED
+
+    case = load_case(case_key)
+    maker = IN_DIST[case_key] if mode == "in_distribution" else PLANTED[case_key][mode]
+    return maker(case, np.random.default_rng(seed))

@@ -24,8 +24,8 @@ def load_case(key: str = "case_a") -> dict:
     return dict(_load("cases.yaml")[key])
 
 
-def load_veto() -> dict:
-    return dict(_load("veto.yaml"))
+def load_veto(case_key: str = "case_a") -> dict:
+    return dict(_load("veto.yaml" if case_key == "case_a" else "veto_steady.yaml"))
 
 
 def load_roi_defaults() -> dict:

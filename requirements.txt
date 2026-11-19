@@ -7,3 +7,5 @@ pandas==3.1.1
 plotly==7.1.0
 streamlit==1.67.0
 PyYAML==6.0.3
+# Optional LLM mode in GTM Studio (only used when PHYSICSVETO_MOCK=0 and ANTHROPIC_API_KEY is set)
+anthropic==2.10.0

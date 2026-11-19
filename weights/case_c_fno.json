@@ -1,0 +1,17 @@
+{
+  "arch": "fno",
+  "kwargs": {
+    "cin": 1,
+    "cout": 1,
+    "modes": 12,
+    "width": 32,
+    "layers": 4
+  },
+  "scale": 0.006878306237773072,
+  "physics_weight": 0.0,
+  "n_train": 1000,
+  "epochs_run": 45,
+  "train_minutes": 29.85,
+  "train_hardware": "CPU, 1 thread(s)",
+  "seed": 0
+}

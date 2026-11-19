@@ -44,6 +44,27 @@ Each raw metric is divided by its 95th percentile on in-distribution validation 
 (`results/calibration.json`). A ratio of 1 means "as good as normal". Sub-scores fall linearly to zero at a
 per-check hard limit, and any hard-limit breach forces a VETO. Weights and limits are in `config/veto.yaml`.
 
+## Cases B and C (steady elliptic problems)
+`physicsveto/solvers/elliptic.py` solves −∇·(k∇u) = f, u = 0 on the boundary, with the same discrete operator
+the veto uses (`apply_operator`), so a solver output has a round-off residual and its boundary flux balances the
+sources exactly. `physicsveto/verify/steady.py` reuses the Case A scoring (`trust.score_metrics`) with:
+
+| Check | What it computes |
+|---|---|
+| PDE residual | RMS of A(u) − f on interior nodes, relative to RMS(f) |
+| Boundary | max |u| on the boundary ring, relative to max |u| |
+| Conservation | mismatch between boundary outflux and injected h²Σf (heat or fluid balance) |
+| OOD distance | Mahalanobis distance of k and f statistics (contrast, roughness, source power, edge share, anisotropy) |
+| Model disagreement | FNO vs U-Net relative L2 |
+
+Levels are calibrated per case (`results/case_b/calibration.json`, `results/case_c/calibration.json`);
+weights and limits are in `config/veto_steady.yaml`.
+
+## LLM drafting (optional)
+`physicsveto/gtm/llm.py` calls the Claude API (`claude-opus-5-5`, server-side model fallbacks on) only when
+`PHYSICSVETO_MOCK=0` and `ANTHROPIC_API_KEY` are set. The model receives the template text and the measured
+numbers from `results/` and is told to use no other numbers. Output is labelled "LLM-drafted" in the app.
+
 ## Scaling on the NVIDIA stack
 The demo runs on CPU at 64×64. The same workflow maps onto GPU infrastructure without changing the veto
 interface:

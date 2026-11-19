@@ -76,7 +76,8 @@ PhysicsVeto is a workbench with one pipeline: solver → dataset → surrogate �
   NVIDIA PhysicsNeMo, and on top of existing CAE solvers, which sell more GPU and solver capacity.
 
 ## 6. Next steps
-1. Cases B (heat) and C (Darcy) on the same pipeline; a PINN baseline for B.
+1. Done since the first version: Cases B (heat) and C (Darcy) on the same pipeline, a physics-loss FNO and a
+   classic PINN baseline for B, and optional LLM drafting in the GTM Studio. Results are in the README.
 2. Active learning: vetoed cases go back into training, the lever with the most effect on veto rate and ROI.
 3. GPU path with PhysicsNeMo and 3D volumes; measure real speedups.
 4. Customer pilot harness and per-customer recalibration.

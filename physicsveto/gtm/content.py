@@ -59,7 +59,7 @@ VERTICALS: dict[str, dict] = {
             "Energy-balance violations are caught automatically, so a surrogate cannot invent or lose heat.",
             "Sign-off still uses the solver; the surrogate removes the exploratory runs.",
         ],
-        "case": "Case B (steady heat conduction) on the roadmap targets this vertical.",
+        "case": "Case B in this demo (steady heat conduction with hot spots) is a small version of this workload.",
     },
     "Manufacturing": {
         "workload": "process simulation (casting, additive, molding), digital twins of equipment",
@@ -74,7 +74,7 @@ VERTICALS: dict[str, dict] = {
             "Out-of-distribution detection is a built-in drift alarm for changing materials and conditions.",
             "Net ROI already subtracts fallback runs, so the case survives finance review.",
         ],
-        "case": "Case C (Darcy flow) on the roadmap covers porous-media and filtration processes.",
+        "case": "Case C in this demo (Darcy flow in porous media) covers filtration and porous-media processes.",
     },
 }
 

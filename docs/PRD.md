@@ -52,14 +52,13 @@ by the solver where it fails. The measured fallback rate then becomes the basis 
   assumptions.
 
 ## 7. Roadmap
-**Now (built):** Case A (2D acoustic wave, seismic); FNO + U-Net; physics veto with calibrated Trust Score;
-planted-failure evaluation; ROI with tornado; GTM Studio in template mode; CPU-only hosting.
+**Now (built):** Case A (2D acoustic wave, seismic); Case B (steady heat conduction, electronics cooling) and
+Case C (Darcy flow, reservoir / CCS) on the same pipeline; FNO + U-Net; physics-loss FNO and a classic PINN
+baseline for Case B (data-driven vs physics-informed trade-offs); physics veto with calibrated Trust Score;
+planted-failure evaluation for all three cases; ROI with tornado; GTM Studio with templates and optional LLM
+drafting (Claude API, off by default); CPU-only hosting.
 
 **Next:**
-- Case B (steady heat conduction, electronics cooling) and Case C (Darcy flow, reservoir / CCS) on the same
-  pipeline.
-- PINN baseline for Case B to show data-driven vs physics-informed trade-offs.
-- Optional LLM generation in GTM Studio when an API key is present.
 - Active learning: vetoed cases are queued as new training data.
 
 **Later:**

@@ -1,0 +1,35 @@
+[
+  {
+    "model": "FD solver (reference)",
+    "rel_l2_median": 0.0,
+    "latency_ms": 6.28,
+    "batched_ms_per_sample": 6.28,
+    "params": 0,
+    "train_minutes": 0.0,
+    "n_train": 0,
+    "physics_weight": 0.0,
+    "residual_median": 0.0
+  },
+  {
+    "model": "FNO",
+    "rel_l2_median": 0.0179,
+    "latency_ms": 9.69,
+    "batched_ms_per_sample": 18.515,
+    "params": 1188353,
+    "train_minutes": 29.85,
+    "n_train": 1000,
+    "physics_weight": 0.0,
+    "residual_median": 2.627
+  },
+  {
+    "model": "U-Net",
+    "rel_l2_median": 0.0155,
+    "latency_ms": 12.95,
+    "batched_ms_per_sample": 14.532,
+    "params": 467809,
+    "train_minutes": 30.19,
+    "n_train": 1000,
+    "physics_weight": 0.0,
+    "residual_median": 2.2458
+  }
+]

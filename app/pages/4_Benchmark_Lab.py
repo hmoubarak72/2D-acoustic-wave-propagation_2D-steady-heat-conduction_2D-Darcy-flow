@@ -2,7 +2,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
-from common import MODE_LABELS, honesty_note, require_results, results, setup  # noqa: I001
+from common import MODE_LABELS, STEADY_LABELS, honesty_note, require_results, results, setup  # noqa: I001
 
 setup("Benchmark Lab", "📊")
 st.title("📊 Benchmark Lab")
@@ -19,8 +19,8 @@ lb_show = lb.rename(columns={
 st.dataframe(lb_show, hide_index=True, width="stretch",
              column_config={"Rel. L2 error (median)": st.column_config.NumberColumn(format="%.3f"),
                             "Veto rate (in-dist.)": st.column_config.NumberColumn(format="%.3f")})
-honesty_note("The PINN baseline from the original plan is not built yet (roadmap: Next). The veto runs on FNO "
-             "predictions, using U-Net only as the second opinion for the disagreement check.")
+honesty_note("The veto runs on FNO predictions, using U-Net only as the second opinion for the disagreement check. "
+             "The PINN baseline and the physics-loss FNO are measured on Case B, further down this page.")
 
 st.markdown("#### Does the veto work? Planted-failure evaluation")
 c1, c2, c3, c4 = st.columns(4)
@@ -92,3 +92,68 @@ if all(hist.values()):
                       xaxis_title="epoch", yaxis_type="log", paper_bgcolor="rgba(0,0,0,0)",
                       margin={"l": 10, "r": 10, "t": 10, "b": 10})
     st.plotly_chart(fig, width="stretch")
+
+
+# ---------------- Cases B and C ----------------
+st.divider()
+st.markdown("### Cases B and C · steady heat conduction and Darcy flow")
+rows = []
+for ck in ("case_b", "case_c"):
+    ss = results(f"{ck}/benchmark_summary.json")
+    if ss:
+        rows.append({"Case": STEADY_LABELS[ck]["title"].split(" · ")[1], "FNO error (median)": ss["fno_in_dist_rel_l2_median"],
+                     "U-Net error (median)": ss["unet_in_dist_rel_l2_median"], "Veto rate in-dist.": ss["in_dist_veto_rate"],
+                     "VETO precision": ss["veto_precision"], "VETO recall": ss["veto_recall"],
+                     "Flag recall": ss["flag_recall"], "Bad answers accepted": ss["accepted_share_truly_bad"],
+                     "Bad with no veto": ss["unfiltered_share_truly_bad"], "Solver (ms)": ss["fd_solver_ms"],
+                     "FNO batched (ms)": ss["fno_batched_ms_per_sample"], "Eval cases": ss["n_eval"]})
+if not rows:
+    st.info("No Case B/C results yet. Run `make data-steady train-steady pinn bench-steady`.")
+else:
+    st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch",
+                 column_config={c: st.column_config.NumberColumn(format="%.3f") for c in rows[0]
+                                if c not in ("Case", "Eval cases", "Solver (ms)", "FNO batched (ms)")})
+    honesty_note("Same veto design and scoring as Case A, with the energy check replaced by a conservation "
+                 "(boundary-flux balance) check. At 64×64 a sparse direct solve takes a few milliseconds, so the "
+                 "surrogate is not faster than the solver here; that only changes at larger, 3D or repeated-query scale.")
+    ck = st.radio("Details for", ["case_b", "case_c"], horizontal=True,
+                  format_func=lambda k: STEADY_LABELS[k]["title"].split(" · ")[0])
+    ss = results(f"{ck}/benchmark_summary.json")
+    if ss:
+        modes = STEADY_LABELS[ck]["modes"]
+        pm = pd.DataFrame(ss["per_mode"]).T.reset_index().rename(columns={"index": "set"})
+        pm["Test set"] = pm["set"].map(lambda k: modes.get(k, k.replace("_", " ")))
+        st.dataframe(pm[["Test set", "group", "n", "share_truly_bad", "veto_rate", "flag_rate", "recall_of_bad",
+                         "median_rel_l2"]].rename(columns={
+            "group": "Type", "n": "Cases", "share_truly_bad": "Truly bad", "veto_rate": "Vetoed",
+            "flag_rate": "Vetoed or review", "recall_of_bad": "Bad cases caught", "median_rel_l2": "Median FNO error"}),
+            hide_index=True, width="stretch")
+    lbs = results(f"{ck}/leaderboard.json")
+    if lbs:
+        st.markdown("#### Leaderboard")
+        st.dataframe(pd.DataFrame(lbs).rename(columns={
+            "model": "Model", "rel_l2_median": "Rel. L2 error (median)", "latency_ms": "Latency, 1 case (ms)",
+            "batched_ms_per_sample": "Batched (ms / case)", "params": "Parameters", "train_minutes": "Training (CPU min)",
+            "n_train": "Training samples", "physics_weight": "Physics-loss weight",
+            "residual_median": "PDE residual (median)"}), hide_index=True, width="stretch")
+
+    st.markdown("#### Data-only vs physics-informed vs PINN (Case B)")
+    lb_b = {r["model"]: r for r in (results("case_b/leaderboard.json") or [])}
+    pinn = results("case_b/pinn.json")
+    cmp_rows = [{"Approach": name, "Training samples": r["n_train"], "Median error": r["rel_l2_median"],
+                 "PDE residual (median)": r["residual_median"], "Training (CPU min)": r["train_minutes"],
+                 "New instance costs": "one forward pass"}
+                for name, r in lb_b.items() if r["n_train"] > 0]
+    if pinn:
+        cmp_rows.append({"Approach": "Classic PINN (no data, trained per instance)", "Training samples": 0,
+                         "Median error": pinn["median_rel_l2"], "PDE residual (median)": None,
+                         "Training (CPU min)": round(pinn["median_train_seconds"] / 60, 2),
+                         "New instance costs": f"a new {pinn['median_train_seconds']:.0f} s training run"})
+    if cmp_rows:
+        st.dataframe(pd.DataFrame(cmp_rows), hide_index=True, width="stretch",
+                     column_config={"Median error": st.column_config.NumberColumn(format="%.3f"),
+                                    "PDE residual (median)": st.column_config.NumberColumn(format="%.3f")})
+        honesty_note("Physics loss = the same discrete PDE residual the veto checks, added to the training loss "
+                     "(PINO-style). The PINN uses no solver data but must be retrained for every new board layout"
+                     + (f"; it was run on {len(pinn['instances'])} test instances, {pinn['iters']} Adam steps each, "
+                        f"{pinn['hardware']}." if pinn else "."))

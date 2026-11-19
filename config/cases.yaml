@@ -23,3 +23,36 @@ case_a:
   n_val: 150
   n_test: 150
   seed: 7
+
+# Case B: 2D steady heat conduction (electronics cooling, manufacturing)
+#   -div(k grad T) = q,  T = 0 on the boundary (cold plate / heat sink at the edges)
+case_b:
+  name: "2D steady heat conduction"
+  vertical: "Electronics cooling / thermal management"
+  n: 64
+  logk_range: 1.0            # log conductivity spans [-1, 1]  ->  k in [0.37, 2.7]
+  corr_len_range: [4.0, 8.0] # Gaussian smoothing sigma (cells)
+  n_sources_range: [1, 3]
+  source_width_range: [2.0, 4.0]
+  source_pos_range: [14, 49] # cells
+  source_power_range: [50.0, 150.0]
+  n_train: 1000
+  n_val: 150
+  n_test: 150
+  seed: 11
+
+# Case C: 2D Darcy flow (reservoir, groundwater, CCS)
+#   -div(k grad p) = f,  p = 0 on the boundary,  f = 1 (uniform injection), two-phase permeability
+case_c:
+  name: "2D Darcy flow"
+  vertical: "Reservoir / groundwater / CO2 storage"
+  n: 64
+  k_low: 3.0
+  k_high: 12.0
+  corr_len_range: [3.0, 6.0]
+  threshold_range: [-0.4, 0.4]   # GRF threshold: controls the high-permeability fraction
+  forcing: 1.0
+  n_train: 1000
+  n_val: 150
+  n_test: 150
+  seed: 13

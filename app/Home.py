@@ -65,9 +65,28 @@ else:
         )
     st.markdown(msg)
 
+rows = [(k, results(f"{k}/benchmark_summary.json")) for k in ("case_b", "case_c")]
+if any(r for _, r in rows):
+    st.markdown("#### Same veto, two more physics · Case B (heat conduction) and Case C (Darcy flow)")
+    cols = st.columns(4)
+    i = 0
+    for key, r in rows:
+        if not r:
+            continue
+        name = "Heat (B)" if key == "case_b" else "Darcy (C)"
+        cols[i].metric(f"{name}: FNO error", f"{100 * r['fno_in_dist_rel_l2_median']:.1f}%", "median, in-dist.",
+                       delta_color="off")
+        cols[i + 1].metric(f"{name}: bad cases caught", f"{100 * r['flag_recall']:.0f}%",
+                           f"veto rate on normal work {100 * r['in_dist_veto_rate']:.0f}%", delta_color="off")
+        i += 2
+    honesty_note("From results/case_b and results/case_c (scripts/benchmark_steady.py). Bad cases caught = "
+                 "share of truly bad predictions sent to VETO or REVIEW.")
+
 st.markdown("#### Walk through the demo")
 st.page_link("pages/1_Simulate_and_Compare.py", label="Simulate & Compare: solver vs surrogate", icon="🧪")
 st.page_link("pages/2_Physics_Veto.py", label="Physics Veto: try to break it", icon="🛡️")
+st.page_link("pages/2_Thermal_and_Darcy_Cases.py", label="Thermal & Darcy cases (B and C): same veto, new physics",
+             icon="🔥")
 st.page_link("pages/3_ROI_Business_Case.py", label="ROI & Business Case", icon="💰")
 st.page_link("pages/4_Benchmark_Lab.py", label="Benchmark Lab", icon="📊")
 st.page_link("pages/5_GTM_Studio.py", label="Go-to-Market Studio", icon="🎯")

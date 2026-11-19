@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 from common import honesty_note, results, setup  # noqa: I001
 
+from physicsveto.gtm import llm
 from physicsveto.gtm.content import COMPETITIVE, MOCK, OBJECTIONS, VERTICALS, solution_brief, talk_track
 
 setup("Go-to-Market Studio", "🎯")
@@ -47,3 +48,29 @@ d2.download_button("🎤 5-minute demo talk track (.md)", track, file_name=f"Phy
 t1, t2 = st.tabs(["Solution brief preview", "Talk track preview"])
 t1.markdown(brief)
 t2.markdown(track)
+
+st.markdown("#### Tailor with an LLM (optional)")
+ok, why = llm.available()
+if not ok:
+    st.caption(f"LLM mode is off: {why} Set PHYSICSVETO_MOCK=0 and ANTHROPIC_API_KEY to enable it. "
+               "The templates above work without it.")
+else:
+    st.caption(f"Drafts with Claude ({llm.MODEL}, server-side fallbacks on). The model only sees the template text "
+               "and the measured numbers from results/, and is told not to add numbers of its own. Review before use.")
+    l1, l2 = st.columns(2)
+    task = l1.selectbox("What to draft", list(llm.TASKS), format_func=lambda t: t.replace("_", " ").capitalize())
+    audience = l2.text_input("Audience", "VP of simulation at a mid-size engineering firm")
+    if st.button("Draft with Claude", type="primary"):
+        measured = {k: v for k, v in (s or {}).items() if k != "per_mode"}
+        src = track if task == "talk_track" else brief
+        with st.spinner("Drafting..."):
+            try:
+                r = llm.generate(task, vertical, audience, src, measured)
+                st.session_state["llm_draft"] = r
+            except RuntimeError as e:
+                st.warning(str(e))
+    r = st.session_state.get("llm_draft")
+    if r:
+        st.info(f"LLM-drafted by {r.model}. Check every number against results/ before sharing. {r.note}")
+        st.markdown(r.text)
+        st.download_button("Download draft (.md)", r.text, file_name="PhysicsVeto_llm_draft.md", mime="text/markdown")

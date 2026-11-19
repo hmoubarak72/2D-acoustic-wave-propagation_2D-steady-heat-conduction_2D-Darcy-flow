@@ -1,0 +1,26 @@
+{
+  "method": "PINN (MLP 4x64 tanh, hard Dirichlet BC, residual loss only, Adam)",
+  "iters": 5000,
+  "collocation_points": 2048,
+  "hardware": "CPU, 1 thread",
+  "instances": [
+    {
+      "instance": 0,
+      "train_seconds": 159.5,
+      "rel_l2": 0.0116
+    },
+    {
+      "instance": 1,
+      "train_seconds": 160.6,
+      "rel_l2": 0.0047
+    },
+    {
+      "instance": 2,
+      "train_seconds": 162.3,
+      "rel_l2": 0.0033
+    }
+  ],
+  "median_rel_l2": 0.0047,
+  "median_train_seconds": 160.6,
+  "note": "Each instance is trained from scratch. No solver data is used."
+}
