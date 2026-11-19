@@ -35,8 +35,9 @@ def main() -> None:
                                    timeout=60_000)
             page.wait_for_timeout(1200)
 
-        for name, path in [("overview", ""), ("simulate", "Simulate_and_Compare"), ("veto", "Physics_Veto"),
-                           ("roi", "ROI_Business_Case"), ("benchmark", "Benchmark_Lab"), ("gtm", "GTM_Studio")]:
+        for name, path in [("home", ""), ("simulate", "Simulate_and_Compare"), ("veto", "Physics_Veto"),
+                           ("thermal_darcy", "Thermal_and_Darcy_Cases"), ("roi", "ROI_Business_Case"),
+                           ("benchmark", "Benchmark_Lab"), ("gtm", "GTM_Studio")]:
             page.goto(f"{a.url}/{path}")
             settle()
             page.screenshot(path=str(FIG / f"{name}.png"))

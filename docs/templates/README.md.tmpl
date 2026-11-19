@@ -135,6 +135,15 @@ docker compose up      # then open http://localhost:8501
 **Streamlit Community Cloud:** New app → this repo → main file `app/Home.py`. Weights and results are committed,
 so the hosted app runs inference only.
 
+### More screens
+| Simulate & Compare | Thermal & Darcy cases |
+|---|---|
+| ![Simulate and Compare](results/figures/simulate.png) | ![Thermal and Darcy cases](results/figures/thermal_darcy.png) |
+| **ROI & Business Case** | **Benchmark Lab** |
+| ![ROI and Business Case](results/figures/roi.png) | ![Benchmark Lab](results/figures/benchmark.png) |
+
+Screenshots and the GIF are captured from the running app by `scripts/make_figures.py`.
+
 ## Repository layout
 ```
 physicsveto/
@@ -194,4 +203,3 @@ off by default (`PHYSICSVETO_MOCK=0` plus `ANTHROPIC_API_KEY`); its drafts are l
 Dr Hesham Moubarak, geophysicist with about 25 years of operator experience (ExxonMobil, KOC, Devon), now
 building verified subsurface AI.
 
-*Independent portfolio project. Not affiliated with or endorsed by NVIDIA or any vendor mentioned.*
